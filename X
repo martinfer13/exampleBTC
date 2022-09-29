@@ -1,0 +1,31 @@
+def run_test(self):
+        """Main test logic"""
+
+        # Create P2P connections will wait for a verack to make sure the connection is fully up
+        peer_messaging = self.nodes[0].add_p2p_connection(BaseNode())
+
+        # Generating a block on one of the nodes will get us out of IBD
+        blocks = [int(self.generate(self.nodes[0], sync_fun=lambda: self.sync_all(self.nodes[0:2]), nblocks=1)[0], 16)]
+
+        # Notice above how we called an RPC by calling a method with the same
+        # name on the node object. Notice also how we used a keyword argument
+        # to specify a named RPC argument. Neither of those are defined on the
+        # node object. Instead there's some __getattr__() magic going on under
+        # the covers to dispatch unrecognised attribute calls to the RPC
+        # interface.
+
+        # Logs are nice. Do plenty of them. They can be used in place of comments for
+        # breaking the test into sub-sections.
+        self.log.info("Starting test!")
+
+        self.log.info("Calling a custom function")
+        custom_function()
+
+        self.log.info("Calling a custom method")
+        self.custom_method()
+
+        self.log.info("Create some blocks")
+        self.tip = int(self.nodes[0].getbestblockhash(), 16)
+        self.block_time = self.nodes[0].getblock(self.nodes[0].getbestblockhash())['time'] + 1
+
+        height = self.nodes[0].getblockcount()
